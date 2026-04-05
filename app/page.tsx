@@ -38,7 +38,7 @@ export default function HomePage() {
           <div className="text-center py-20">
             <p className="text-5xl mb-4">🛍️</p>
             <h2 className="text-xl font-semibold text-gray-700">Nothing saved yet</h2>
-            <p className="text-gray-400 mt-2 mb-6">Start adding items you love from around the web.</p>
+            <p className="text-gray-400 mt-2 mb-6">Start adding items you love.</p>
             <Link
               href="/add"
               className="inline-block bg-rose-500 text-white px-6 py-2.5 rounded-full hover:bg-rose-600 transition-colors text-sm font-medium"
