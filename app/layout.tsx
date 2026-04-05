@@ -18,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${geist.className} h-full antialiased`}>
-      <body className="min-h-full flex flex-col bg-zinc-950">
+      <body className="min-h-full flex flex-col bg-gray-50">
         <WishlistProvider>
           <Nav />
           {children}

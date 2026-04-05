@@ -17,11 +17,11 @@ export default function WishlistPage() {
 
   return (
     <main className="flex-1 relative overflow-hidden">
-      <div className="pointer-events-none absolute -top-20 right-0 w-72 h-72 bg-fuchsia-600/15 rounded-full blur-3xl" />
+      <div className="pointer-events-none absolute -top-20 right-0 w-72 h-72 bg-fuchsia-200/40 rounded-full blur-3xl" />
 
       <div className="relative max-w-6xl mx-auto px-4 py-12">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-fuchsia-400 to-pink-400 bg-clip-text text-transparent">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-fuchsia-500 to-pink-500 bg-clip-text text-transparent">
             All Items
           </h1>
           <Link
@@ -40,7 +40,7 @@ export default function WishlistPage() {
               className={`text-sm px-4 py-1.5 rounded-full border transition-colors ${
                 activeCategory === cat
                   ? 'bg-gradient-to-r from-fuchsia-500 to-pink-500 text-white border-transparent'
-                  : 'bg-zinc-900 text-zinc-400 border-zinc-700 hover:border-zinc-500 hover:text-white'
+                  : 'bg-white text-gray-600 border-gray-200 hover:border-fuchsia-300 hover:text-fuchsia-600'
               }`}
             >
               {cat}
@@ -49,9 +49,9 @@ export default function WishlistPage() {
         </div>
 
         {filtered.length === 0 ? (
-          <div className="text-center py-20 text-zinc-500">
+          <div className="text-center py-20 text-gray-400">
             {items.length === 0 ? 'No items yet. ' : 'No items in this category. '}
-            <Link href="/add" className="text-fuchsia-400 hover:text-fuchsia-300">Add one →</Link>
+            <Link href="/add" className="text-fuchsia-500 hover:text-fuchsia-600">Add one →</Link>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">

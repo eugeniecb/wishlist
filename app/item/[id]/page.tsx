@@ -19,8 +19,8 @@ export default function ItemPage() {
     return (
       <main className="flex-1 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-zinc-500 mb-4">Item not found.</p>
-          <Link href="/wishlist" className="text-fuchsia-400 hover:underline text-sm">
+          <p className="text-gray-400 mb-4">Item not found.</p>
+          <Link href="/wishlist" className="text-fuchsia-500 hover:underline text-sm">
             ← Back to wishlist
           </Link>
         </div>
@@ -41,20 +41,20 @@ export default function ItemPage() {
 
   return (
     <main className="flex-1 relative overflow-hidden">
-      <div className="pointer-events-none absolute -top-20 right-0 w-72 h-72 bg-fuchsia-600/15 rounded-full blur-3xl" />
+      <div className="pointer-events-none absolute -top-20 right-0 w-72 h-72 bg-fuchsia-200/40 rounded-full blur-3xl" />
 
       <div className="relative max-w-2xl mx-auto px-4 py-12">
-        <Link href="/wishlist" className="text-sm text-zinc-500 hover:text-white mb-6 inline-block transition-colors">
+        <Link href="/wishlist" className="text-sm text-gray-500 hover:text-gray-900 mb-6 inline-block transition-colors">
           ← Back to wishlist
         </Link>
 
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden">
+        <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
           {item.imageUrl ? (
-            <div className="aspect-video overflow-hidden bg-zinc-800">
+            <div className="aspect-video overflow-hidden bg-gray-50">
               <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
             </div>
           ) : (
-            <div className="aspect-video bg-zinc-800 flex items-center justify-center text-7xl">
+            <div className="aspect-video bg-gray-50 flex items-center justify-center text-7xl">
               🛍️
             </div>
           )}
@@ -62,31 +62,31 @@ export default function ItemPage() {
           <div className="p-6">
             <div className="flex items-start justify-between gap-4 mb-2">
               <div>
-                <p className="text-sm text-zinc-500 mb-1">{item.store}</p>
-                <h1 className="text-2xl font-bold text-white">{item.name}</h1>
+                <p className="text-sm text-gray-400 mb-1">{item.store}</p>
+                <h1 className="text-2xl font-bold text-gray-900">{item.name}</h1>
               </div>
               <PriorityBadge priority={item.priority} />
             </div>
 
             {item.price !== undefined && (
-              <p className="text-3xl font-bold bg-gradient-to-r from-fuchsia-400 to-pink-400 bg-clip-text text-transparent mt-3 mb-4">
+              <p className="text-3xl font-bold bg-gradient-to-r from-fuchsia-500 to-pink-500 bg-clip-text text-transparent mt-3 mb-4">
                 ${item.price.toFixed(2)}
               </p>
             )}
 
             <div className="flex items-center gap-3 mb-6">
-              <span className="text-xs bg-zinc-800 text-zinc-400 px-3 py-1 rounded-full border border-zinc-700">
+              <span className="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full border border-gray-200">
                 {item.category}
               </span>
-              <span className="text-xs text-zinc-500">
+              <span className="text-xs text-gray-400">
                 Added {new Date(item.dateAdded).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
               </span>
             </div>
 
             {item.notes && (
-              <div className="bg-zinc-800 rounded-xl p-4 mb-6 border border-zinc-700">
-                <p className="text-xs font-medium text-zinc-500 mb-1 uppercase tracking-wide">Notes</p>
-                <p className="text-sm text-zinc-300">{item.notes}</p>
+              <div className="bg-gray-50 rounded-xl p-4 mb-6 border border-gray-100">
+                <p className="text-xs font-medium text-gray-500 mb-1 uppercase tracking-wide">Notes</p>
+                <p className="text-sm text-gray-700">{item.notes}</p>
               </div>
             )}
 
@@ -101,14 +101,14 @@ export default function ItemPage() {
               </a>
               <button
                 onClick={handleDelete}
-                className="px-5 py-3 border border-zinc-700 text-zinc-500 rounded-xl hover:border-red-500/50 hover:text-red-400 transition-colors text-sm"
+                className="px-5 py-3 border border-gray-200 text-gray-500 rounded-xl hover:border-red-300 hover:text-red-500 transition-colors text-sm"
               >
                 Remove
               </button>
             </div>
 
             {item.purchased ? (
-              <div className="flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-xl px-4 py-3 text-sm font-medium">
+              <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl px-4 py-3 text-sm font-medium">
                 <span>✓</span>
                 <span>Purchased by {item.purchasedBy}</span>
               </div>
@@ -119,7 +119,7 @@ export default function ItemPage() {
                   placeholder="Your name"
                   value={purchaserName}
                   onChange={e => setPurchaserName(e.target.value)}
-                  className="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500 transition"
+                  className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400 transition"
                 />
                 <button
                   onClick={handleConfirmPurchase}
@@ -132,7 +132,7 @@ export default function ItemPage() {
             ) : (
               <button
                 onClick={() => setShowPurchaseForm(true)}
-                className="w-full py-3 border border-emerald-500/40 text-emerald-400 rounded-xl text-sm font-medium hover:bg-emerald-500/10 transition-colors"
+                className="w-full py-3 border border-emerald-300 text-emerald-600 rounded-xl text-sm font-medium hover:bg-emerald-50 transition-colors"
               >
                 Mark as purchased
               </button>
