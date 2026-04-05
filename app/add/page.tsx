@@ -73,15 +73,21 @@ export default function AddPage() {
     router.push('/wishlist')
   }
 
-  return (
-    <main className="flex-1">
-      <div className="max-w-2xl mx-auto px-4 py-12">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Add Item</h1>
+  const inputClass = "w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-fuchsia-500 transition"
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-sm p-6 space-y-5">
+  return (
+    <main className="flex-1 relative overflow-hidden">
+      <div className="pointer-events-none absolute -top-20 -left-20 w-72 h-72 bg-fuchsia-600/20 rounded-full blur-3xl" />
+
+      <div className="relative max-w-2xl mx-auto px-4 py-12">
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-fuchsia-400 to-pink-400 bg-clip-text text-transparent mb-8">
+          Add Item
+        </h1>
+
+        <form onSubmit={handleSubmit} className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 space-y-5">
           <div>
-            <label htmlFor="url" className="block text-sm font-medium text-gray-700 mb-1">
-              Product URL <span className="text-rose-500">*</span>
+            <label htmlFor="url" className="block text-sm font-medium text-zinc-300 mb-1">
+              Product URL <span className="text-fuchsia-400">*</span>
             </label>
             <div className="flex gap-2">
               <input
@@ -92,23 +98,23 @@ export default function AddPage() {
                 onChange={handleChange}
                 required
                 placeholder="https://www.amazon.com/..."
-                className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-rose-400 transition"
+                className="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-fuchsia-500 transition"
               />
               <button
                 type="button"
                 onClick={handleFetch}
                 disabled={!form.url || fetching}
-                className="px-4 py-2.5 bg-gray-100 text-gray-700 rounded-xl text-sm font-medium hover:bg-gray-200 transition-colors disabled:opacity-40 whitespace-nowrap"
+                className="px-4 py-2.5 bg-zinc-800 border border-zinc-700 text-zinc-300 rounded-xl text-sm font-medium hover:border-fuchsia-500 hover:text-white transition-colors disabled:opacity-40 whitespace-nowrap"
               >
                 {fetching ? 'Fetching…' : 'Fetch details'}
               </button>
             </div>
-            {fetchError && <p className="text-xs text-rose-500 mt-1">{fetchError}</p>}
+            {fetchError && <p className="text-xs text-pink-400 mt-1">{fetchError}</p>}
           </div>
 
           <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-              Item name <span className="text-rose-500">*</span>
+            <label htmlFor="name" className="block text-sm font-medium text-zinc-300 mb-1">
+              Item name <span className="text-fuchsia-400">*</span>
             </label>
             <input
               id="name"
@@ -117,13 +123,13 @@ export default function AddPage() {
               onChange={handleChange}
               required
               placeholder="e.g. Nike Air Max 270"
-              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-rose-400 transition"
+              className={inputClass}
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="price" className="block text-sm font-medium text-zinc-300 mb-1">
                 Price ($)
               </label>
               <input
@@ -135,11 +141,11 @@ export default function AddPage() {
                 value={form.price}
                 onChange={handleChange}
                 placeholder="0.00"
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-rose-400 transition"
+                className={inputClass}
               />
             </div>
             <div>
-              <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="category" className="block text-sm font-medium text-zinc-300 mb-1">
                 Category
               </label>
               <select
@@ -147,7 +153,7 @@ export default function AddPage() {
                 name="category"
                 value={form.category}
                 onChange={handleChange}
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-rose-400 transition bg-white"
+                className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-fuchsia-500 transition"
               >
                 {CATEGORIES.map(cat => (
                   <option key={cat}>{cat}</option>
@@ -157,7 +163,7 @@ export default function AddPage() {
           </div>
 
           <div>
-            <p className="block text-sm font-medium text-gray-700 mb-2">Priority</p>
+            <p className="block text-sm font-medium text-zinc-300 mb-2">Priority</p>
             <div className="flex gap-4">
               {(['high', 'medium', 'low'] as const).map(p => (
                 <label key={p} className="flex items-center gap-2 cursor-pointer">
@@ -167,16 +173,16 @@ export default function AddPage() {
                     value={p}
                     checked={form.priority === p}
                     onChange={handleChange}
-                    className="accent-rose-500"
+                    className="accent-fuchsia-500"
                   />
-                  <span className="text-sm text-gray-700 capitalize">{p}</span>
+                  <span className="text-sm text-zinc-300 capitalize">{p}</span>
                 </label>
               ))}
             </div>
           </div>
 
           <div>
-            <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="imageUrl" className="block text-sm font-medium text-zinc-300 mb-1">
               Image URL
             </label>
             <input
@@ -186,12 +192,12 @@ export default function AddPage() {
               value={form.imageUrl}
               onChange={handleChange}
               placeholder="https://..."
-              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-rose-400 transition"
+              className={inputClass}
             />
           </div>
 
           <div>
-            <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="notes" className="block text-sm font-medium text-zinc-300 mb-1">
               Notes
             </label>
             <textarea
@@ -201,13 +207,13 @@ export default function AddPage() {
               onChange={handleChange}
               rows={3}
               placeholder="Size, color, why you want it..."
-              className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-rose-400 transition resize-none"
+              className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-fuchsia-500 transition resize-none"
             />
           </div>
 
           <button
             type="submit"
-            className="w-full bg-rose-500 text-white py-3 rounded-xl font-medium hover:bg-rose-600 transition-colors"
+            className="w-full bg-gradient-to-r from-fuchsia-500 to-pink-500 text-white py-3 rounded-xl font-medium hover:opacity-90 transition-opacity"
           >
             Save to wishlist
           </button>

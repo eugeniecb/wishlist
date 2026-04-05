@@ -12,9 +12,9 @@ export default function Nav() {
   const pathname = usePathname()
 
   return (
-    <nav className="sticky top-0 z-10 bg-white/80 backdrop-blur border-b border-gray-100">
+    <nav className="sticky top-0 z-10 bg-zinc-950/80 backdrop-blur border-b border-zinc-800">
       <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
-        <Link href="/" className="font-semibold text-gray-900 tracking-tight">
+        <Link href="/" className="font-bold tracking-tight bg-gradient-to-r from-fuchsia-400 to-pink-400 bg-clip-text text-transparent">
           ✦ Wishlist
         </Link>
         <div className="flex items-center gap-6">
@@ -24,8 +24,8 @@ export default function Nav() {
               href={link.href}
               className={`text-sm transition-colors ${
                 pathname === link.href
-                  ? 'text-gray-900 font-medium'
-                  : 'text-gray-500 hover:text-gray-900'
+                  ? 'text-white font-medium'
+                  : 'text-zinc-400 hover:text-white'
               }`}
             >
               {link.label}
@@ -33,7 +33,7 @@ export default function Nav() {
           ))}
           <Link
             href="/add"
-            className="text-sm bg-rose-500 text-white px-4 py-1.5 rounded-full hover:bg-rose-600 transition-colors font-medium"
+            className="text-sm bg-gradient-to-r from-fuchsia-500 to-pink-500 text-white px-4 py-1.5 rounded-full hover:opacity-90 transition-opacity font-medium"
           >
             + Add Item
           </Link>

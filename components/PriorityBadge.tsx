@@ -1,9 +1,9 @@
 import type { WishlistItem } from '@/lib/types'
 
 const styles: Record<WishlistItem['priority'], string> = {
-  high: 'bg-rose-50 text-rose-600',
-  medium: 'bg-amber-50 text-amber-600',
-  low: 'bg-gray-100 text-gray-500',
+  high: 'bg-fuchsia-500/20 text-fuchsia-300 border border-fuchsia-500/30',
+  medium: 'bg-amber-500/20 text-amber-300 border border-amber-500/30',
+  low: 'bg-zinc-700/50 text-zinc-400 border border-zinc-600/30',
 }
 
 export default function PriorityBadge({ priority }: { priority: WishlistItem['priority'] }) {
