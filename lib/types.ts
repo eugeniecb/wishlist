@@ -9,4 +9,6 @@ export interface WishlistItem {
   notes?: string
   dateAdded: string
   store: string
+  purchased?: boolean
+  purchasedBy?: string
 }

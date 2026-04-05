@@ -1,14 +1,17 @@
 'use client'
 
 import { useParams, useRouter } from 'next/navigation'
+import { useState } from 'react'
 import Link from 'next/link'
 import { useWishlist } from '@/lib/context'
 import PriorityBadge from '@/components/PriorityBadge'
 
 export default function ItemPage() {
   const { id } = useParams<{ id: string }>()
-  const { items, removeItem } = useWishlist()
+  const { items, removeItem, markPurchased } = useWishlist()
   const router = useRouter()
+  const [showPurchaseForm, setShowPurchaseForm] = useState(false)
+  const [purchaserName, setPurchaserName] = useState('')
 
   const item = items.find(i => i.id === id)
 
@@ -28,6 +31,12 @@ export default function ItemPage() {
   function handleDelete() {
     removeItem(item!.id)
     router.push('/wishlist')
+  }
+
+  function handleConfirmPurchase() {
+    if (!purchaserName.trim()) return
+    markPurchased(item!.id, purchaserName.trim())
+    setShowPurchaseForm(false)
   }
 
   return (
@@ -77,7 +86,7 @@ export default function ItemPage() {
               </div>
             )}
 
-            <div className="flex gap-3">
+            <div className="flex gap-3 mb-4">
               <a
                 href={item.url}
                 target="_blank"
@@ -93,6 +102,37 @@ export default function ItemPage() {
                 Remove
               </button>
             </div>
+
+            {item.purchased ? (
+              <div className="flex items-center gap-2 bg-green-50 border border-green-200 text-green-700 rounded-xl px-4 py-3 text-sm font-medium">
+                <span>✓</span>
+                <span>Purchased by {item.purchasedBy}</span>
+              </div>
+            ) : showPurchaseForm ? (
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="Your name"
+                  value={purchaserName}
+                  onChange={e => setPurchaserName(e.target.value)}
+                  className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-green-400"
+                />
+                <button
+                  onClick={handleConfirmPurchase}
+                  disabled={!purchaserName.trim()}
+                  className="px-5 py-3 bg-green-500 text-white rounded-xl text-sm font-medium hover:bg-green-600 transition-colors disabled:opacity-40"
+                >
+                  Confirm
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setShowPurchaseForm(true)}
+                className="w-full py-3 border border-green-300 text-green-600 rounded-xl text-sm font-medium hover:bg-green-50 transition-colors"
+              >
+                Mark as purchased
+              </button>
+            )}
           </div>
         </div>
       </div>

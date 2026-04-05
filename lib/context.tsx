@@ -8,6 +8,7 @@ interface WishlistContextType {
   items: WishlistItem[]
   addItem: (item: Omit<WishlistItem, 'id' | 'dateAdded'>) => void
   removeItem: (id: string) => void
+  markPurchased: (id: string, purchasedBy: string) => void
 }
 
 const WishlistContext = createContext<WishlistContextType | null>(null)
@@ -26,8 +27,14 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     setItems(prev => prev.filter(item => item.id !== id))
   }
 
+  function markPurchased(id: string, purchasedBy: string) {
+    setItems(prev => prev.map(item =>
+      item.id === id ? { ...item, purchased: true, purchasedBy } : item
+    ))
+  }
+
   return (
-    <WishlistContext.Provider value={{ items, addItem, removeItem }}>
+    <WishlistContext.Provider value={{ items, addItem, removeItem, markPurchased }}>
       {children}
     </WishlistContext.Provider>
   )

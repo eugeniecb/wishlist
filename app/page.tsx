@@ -7,7 +7,7 @@ import ItemCard from '@/components/ItemCard'
 export default function HomePage() {
   const { items } = useWishlist()
 
-  const totalCost = items.reduce((sum, item) => sum + (item.price ?? 0), 0)
+  const purchasedCount = items.filter(i => i.purchased).length
   const highPriority = items.filter(i => i.priority === 'high').length
   const recent = items.slice(0, 6)
 
@@ -25,8 +25,8 @@ export default function HomePage() {
             <p className="text-sm text-gray-500 mt-1">Items saved</p>
           </div>
           <div className="bg-white rounded-2xl p-5 shadow-sm">
-            <p className="text-3xl font-bold text-rose-500">${totalCost.toFixed(0)}</p>
-            <p className="text-sm text-gray-500 mt-1">Total value</p>
+            <p className="text-3xl font-bold text-green-500">{purchasedCount}</p>
+            <p className="text-sm text-gray-500 mt-1">Purchased</p>
           </div>
           <div className="bg-white rounded-2xl p-5 shadow-sm col-span-2 sm:col-span-1">
             <p className="text-3xl font-bold text-gray-900">{highPriority}</p>
