@@ -6,7 +6,7 @@ export default function ItemCard({ item }: { item: WishlistItem }) {
   return (
     <Link
       href={`/item/${item.id}`}
-      className="group block bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.01] overflow-hidden"
+      className={`group block bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.01] overflow-hidden${item.purchased ? ' opacity-50' : ''}`}
     >
       <div className="relative">
         {item.imageUrl ? (
