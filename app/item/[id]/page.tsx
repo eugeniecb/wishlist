@@ -5,15 +5,29 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useWishlist } from '@/lib/context'
 import PriorityBadge from '@/components/PriorityBadge'
+import type { WishlistItem } from '@/lib/types'
+
+const CATEGORIES: WishlistItem['category'][] = ['Clothing', 'Tech', 'Home', 'Beauty', 'Books', 'Other']
 
 export default function ItemPage() {
   const { id } = useParams<{ id: string }>()
-  const { items, removeItem, markPurchased } = useWishlist()
+  const { items, removeItem, markPurchased, updateItem } = useWishlist()
   const router = useRouter()
   const [showPurchaseForm, setShowPurchaseForm] = useState(false)
   const [purchaserName, setPurchaserName] = useState('')
+  const [editing, setEditing] = useState(false)
 
   const item = items.find(i => i.id === id)
+
+  const [editForm, setEditForm] = useState({
+    name: '',
+    url: '',
+    price: '',
+    imageUrl: '',
+    category: 'Other' as WishlistItem['category'],
+    priority: 'medium' as WishlistItem['priority'],
+    notes: '',
+  })
 
   if (!item) {
     return (
@@ -28,6 +42,39 @@ export default function ItemPage() {
     )
   }
 
+  function startEditing() {
+    setEditForm({
+      name: item!.name,
+      url: item!.url,
+      price: item!.price !== undefined ? String(item!.price) : '',
+      imageUrl: item!.imageUrl || '',
+      category: item!.category,
+      priority: item!.priority,
+      notes: item!.notes || '',
+    })
+    setEditing(true)
+  }
+
+  function handleEditChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
+    setEditForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
+  }
+
+  function handleSave(e: React.FormEvent) {
+    e.preventDefault()
+    const hostname = (() => { try { return new URL(editForm.url).hostname.replace('www.', '') } catch { return item!.store } })()
+    updateItem(item!.id, {
+      name: editForm.name,
+      url: editForm.url,
+      price: editForm.price ? parseFloat(editForm.price) : undefined,
+      imageUrl: editForm.imageUrl || undefined,
+      category: editForm.category,
+      priority: editForm.priority,
+      notes: editForm.notes || undefined,
+      store: hostname,
+    })
+    setEditing(false)
+  }
+
   function handleDelete() {
     removeItem(item!.id)
     router.push('/wishlist')
@@ -39,6 +86,8 @@ export default function ItemPage() {
     setShowPurchaseForm(false)
   }
 
+  const inputClass = "w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-fuchsia-400 focus:ring-1 focus:ring-fuchsia-400 transition"
+
   return (
     <main className="flex-1 relative overflow-hidden">
       <div className="pointer-events-none absolute -top-20 right-0 w-72 h-72 bg-fuchsia-200/40 rounded-full blur-3xl" />
@@ -49,93 +98,157 @@ export default function ItemPage() {
         </Link>
 
         <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
-          {item.imageUrl ? (
-            <div className="aspect-video overflow-hidden bg-gray-50">
-              <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
-            </div>
-          ) : (
-            <div className="aspect-video bg-gray-50 flex items-center justify-center text-7xl">
-              🛍️
-            </div>
+          {!editing && (
+            <>
+              {item.imageUrl ? (
+                <div className="aspect-video overflow-hidden bg-gray-50">
+                  <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
+                </div>
+              ) : (
+                <div className="aspect-video bg-gray-50 flex items-center justify-center text-7xl">
+                  🛍️
+                </div>
+              )}
+            </>
           )}
 
           <div className="p-6">
-            <div className="flex items-start justify-between gap-4 mb-2">
-              <div>
-                <p className="text-sm text-gray-400 mb-1">{item.store}</p>
-                <h1 className="text-2xl font-bold text-gray-900">{item.name}</h1>
-              </div>
-              <PriorityBadge priority={item.priority} />
-            </div>
-
-            {item.price !== undefined && (
-              <p className="text-3xl font-bold bg-gradient-to-r from-fuchsia-500 to-pink-500 bg-clip-text text-transparent mt-3 mb-4">
-                ${item.price.toFixed(2)}
-              </p>
-            )}
-
-            <div className="flex items-center gap-3 mb-6">
-              <span className="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full border border-gray-200">
-                {item.category}
-              </span>
-              <span className="text-xs text-gray-400">
-                Added {new Date(item.dateAdded).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-              </span>
-            </div>
-
-            {item.notes && (
-              <div className="bg-gray-50 rounded-xl p-4 mb-6 border border-gray-100">
-                <p className="text-xs font-medium text-gray-500 mb-1 uppercase tracking-wide">Notes</p>
-                <p className="text-sm text-gray-700">{item.notes}</p>
-              </div>
-            )}
-
-            <div className="flex gap-3 mb-4">
-              <a
-                href={item.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-1 text-center bg-gradient-to-r from-fuchsia-500 to-pink-500 text-white py-3 rounded-xl font-medium hover:opacity-90 transition-opacity text-sm"
-              >
-                View on {item.store} →
-              </a>
-              <button
-                onClick={handleDelete}
-                className="px-5 py-3 border border-gray-200 text-gray-500 rounded-xl hover:border-red-300 hover:text-red-500 transition-colors text-sm"
-              >
-                Remove
-              </button>
-            </div>
-
-            {item.purchased ? (
-              <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl px-4 py-3 text-sm font-medium">
-                <span>✓</span>
-                <span>Purchased by {item.purchasedBy}</span>
-              </div>
-            ) : showPurchaseForm ? (
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  placeholder="Your name"
-                  value={purchaserName}
-                  onChange={e => setPurchaserName(e.target.value)}
-                  className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400 transition"
-                />
-                <button
-                  onClick={handleConfirmPurchase}
-                  disabled={!purchaserName.trim()}
-                  className="px-5 py-3 bg-emerald-500 text-white rounded-xl text-sm font-medium hover:bg-emerald-600 transition-colors disabled:opacity-40"
-                >
-                  Confirm
-                </button>
-              </div>
+            {editing ? (
+              <form onSubmit={handleSave} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Item name <span className="text-fuchsia-500">*</span></label>
+                  <input name="name" value={editForm.name} onChange={handleEditChange} required className={inputClass} />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Product URL <span className="text-fuchsia-500">*</span></label>
+                  <input name="url" type="url" value={editForm.url} onChange={handleEditChange} required className={inputClass} />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Price ($)</label>
+                    <input name="price" type="number" min="0" step="0.01" value={editForm.price} onChange={handleEditChange} className={inputClass} />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                    <select name="category" value={editForm.category} onChange={handleEditChange} className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-fuchsia-400 focus:ring-1 focus:ring-fuchsia-400 transition">
+                      {CATEGORIES.map(cat => <option key={cat}>{cat}</option>)}
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <p className="block text-sm font-medium text-gray-700 mb-2">Priority</p>
+                  <div className="flex gap-4">
+                    {(['high', 'medium', 'low'] as const).map(p => (
+                      <label key={p} className="flex items-center gap-2 cursor-pointer">
+                        <input type="radio" name="priority" value={p} checked={editForm.priority === p} onChange={handleEditChange} className="accent-fuchsia-500" />
+                        <span className="text-sm text-gray-700 capitalize">{p}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
+                  <input name="imageUrl" type="url" value={editForm.imageUrl} onChange={handleEditChange} className={inputClass} />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                  <textarea name="notes" value={editForm.notes} onChange={handleEditChange} rows={3} className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:border-fuchsia-400 focus:ring-1 focus:ring-fuchsia-400 transition resize-none" />
+                </div>
+                <div className="flex gap-3">
+                  <button type="submit" className="flex-1 bg-gradient-to-r from-fuchsia-500 to-pink-500 text-white py-3 rounded-xl font-medium hover:opacity-90 transition-opacity text-sm">
+                    Save changes
+                  </button>
+                  <button type="button" onClick={() => setEditing(false)} className="px-5 py-3 border border-gray-200 text-gray-500 rounded-xl hover:text-gray-900 transition-colors text-sm">
+                    Cancel
+                  </button>
+                </div>
+              </form>
             ) : (
-              <button
-                onClick={() => setShowPurchaseForm(true)}
-                className="w-full py-3 border border-emerald-300 text-emerald-600 rounded-xl text-sm font-medium hover:bg-emerald-50 transition-colors"
-              >
-                Mark as purchased
-              </button>
+              <>
+                <div className="flex items-start justify-between gap-4 mb-2">
+                  <div>
+                    <p className="text-sm text-gray-400 mb-1">{item.store}</p>
+                    <h1 className="text-2xl font-bold text-gray-900">{item.name}</h1>
+                  </div>
+                  <PriorityBadge priority={item.priority} />
+                </div>
+
+                {item.price !== undefined && (
+                  <p className="text-3xl font-bold bg-gradient-to-r from-fuchsia-500 to-pink-500 bg-clip-text text-transparent mt-3 mb-4">
+                    ${item.price.toFixed(2)}
+                  </p>
+                )}
+
+                <div className="flex items-center gap-3 mb-6">
+                  <span className="text-xs bg-gray-100 text-gray-600 px-3 py-1 rounded-full border border-gray-200">
+                    {item.category}
+                  </span>
+                  <span className="text-xs text-gray-400">
+                    Added {new Date(item.dateAdded).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+                  </span>
+                </div>
+
+                {item.notes && (
+                  <div className="bg-gray-50 rounded-xl p-4 mb-6 border border-gray-100">
+                    <p className="text-xs font-medium text-gray-500 mb-1 uppercase tracking-wide">Notes</p>
+                    <p className="text-sm text-gray-700">{item.notes}</p>
+                  </div>
+                )}
+
+                <div className="flex gap-3 mb-4">
+                  <a
+                    href={item.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 text-center bg-gradient-to-r from-fuchsia-500 to-pink-500 text-white py-3 rounded-xl font-medium hover:opacity-90 transition-opacity text-sm"
+                  >
+                    View on {item.store} →
+                  </a>
+                  <button
+                    onClick={startEditing}
+                    className="px-5 py-3 border border-gray-200 text-gray-500 rounded-xl hover:border-fuchsia-300 hover:text-fuchsia-600 transition-colors text-sm"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={handleDelete}
+                    className="px-5 py-3 border border-gray-200 text-gray-500 rounded-xl hover:border-red-300 hover:text-red-500 transition-colors text-sm"
+                  >
+                    Remove
+                  </button>
+                </div>
+
+                {item.purchased ? (
+                  <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-700 rounded-xl px-4 py-3 text-sm font-medium">
+                    <span>✓</span>
+                    <span>Purchased by {item.purchasedBy}</span>
+                  </div>
+                ) : showPurchaseForm ? (
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="Your name"
+                      value={purchaserName}
+                      onChange={e => setPurchaserName(e.target.value)}
+                      className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400 transition"
+                    />
+                    <button
+                      onClick={handleConfirmPurchase}
+                      disabled={!purchaserName.trim()}
+                      className="px-5 py-3 bg-emerald-500 text-white rounded-xl text-sm font-medium hover:bg-emerald-600 transition-colors disabled:opacity-40"
+                    >
+                      Confirm
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setShowPurchaseForm(true)}
+                    className="w-full py-3 border border-emerald-300 text-emerald-600 rounded-xl text-sm font-medium hover:bg-emerald-50 transition-colors"
+                  >
+                    Mark as purchased
+                  </button>
+                )}
+              </>
             )}
           </div>
         </div>
